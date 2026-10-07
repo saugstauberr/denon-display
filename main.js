@@ -1,13 +1,6 @@
 const { app, BrowserWindow } = require('electron');
-const { StageLinq } = require('stagelinq');
-const abletonlink = require('abletonlink');
-
-const link = new abletonlink();
-
-link.startUpdate(60, (beat, phase, bpm) => {
-    console.log("updated: ", beat, phase, bpm);
-    link.bpm = 128;
-});
+const AbletonLinkManager = require('./modules/abletonLinkManager');
+const StageLinqManager = require('./modules/stageLinqManager');
 
 let mainWindow;
 
@@ -22,47 +15,21 @@ function createWindow() {
   });
 
   mainWindow.loadFile('index.html');
+
+  mainWindow.webContents.on('did-finish-load', () => {
+    // Initialen Link-Status an die UI senden
+    AbletonLinkManager.syncInitialData(mainWindow);
+  });
 }
 
 app.whenReady().then(async () => {
   createWindow();
 
-  try {
-    // 1. Optionen statisch auf der Klasse setzen
-    StageLinq.options = { downloadDbSources: true };
-
-    // 2. Event-Listener statisch an StageLinq.devices hängen
-    StageLinq.devices.on('trackLoaded', (status) => {
-      console.log(`Track geladen: ${status.title} - ${status.artist} auf Deck ${status.deck}`);
-      if (mainWindow) {
-        mainWindow.webContents.send('trackLoaded', status);
-      }
-    });
-
-    StageLinq.devices.on('nowPlaying', (status) => {
-      console.log(`Now Playing: ${status.title} - ${status.artist}`);
-      if (mainWindow) {
-        mainWindow.webContents.send('nowPlaying', status);
-      }
-    });
-
-    // 3. Statisch verbinden (ohne 'new')
-    await StageLinq.connect();
-    console.log('StageLinq erfolgreich im Netzwerk verbunden!');
-
-  } catch (err) {
-    console.error('StageLinq Verbindungsfehler:', err);
-  }
+  // Module wie "Namespaces" initialisieren
+  AbletonLinkManager.init(mainWindow);
+  await StageLinqManager.init(mainWindow);
 });
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-});
-
-app.on('activate', () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
-  }
+  if (process.platform !== 'darwin') app.quit();
 });
