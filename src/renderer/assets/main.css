@@ -3,6 +3,8 @@
     src: url('/assets/OpenSans-var.ttf');
 }
 
+@import "tailwindcss";
+
 body {
     background-color: black;
     color: white;
