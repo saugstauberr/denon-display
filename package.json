@@ -1,0 +1,19 @@
+{
+  "name": "denon-display",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^44.6.0"
+  },
+  "dependencies": {
+    "abletonlink": "^0.2.0-beta.0",
+    "stagelinq": "^3.5.7"
+  }
+}
