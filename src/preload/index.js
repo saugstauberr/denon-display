@@ -11,6 +11,19 @@ if (process.contextIsolated) {
   try {
     contextBridge.exposeInMainWorld('electron', electronAPI)
     contextBridge.exposeInMainWorld('api', api)
+    contextBridge.exposeInMainWorld('api', {
+  onLinkBpm: (callback) => {
+    ipcRenderer.on('link-bpm', (_event, bpm) => {
+      callback(bpm)
+    })
+  },
+
+  onLinkPeers: (callback) => {
+    ipcRenderer.on('link-peers', (_event, peers) => {
+      callback(peers)
+    })
+  }
+})
   } catch (error) {
     console.error(error)
   }

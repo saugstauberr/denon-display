@@ -15,6 +15,26 @@ document.addEventListener('DOMContentLoaded', () => {
     return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}.${String(ms).padStart(2, '0')}`
   }
 
+  window.api.onLinkBpm((bpm) => {
+    const bpmEl = document.getElementById('link-bpm')
+
+    if (!bpmEl) return
+
+    const value = Number(bpm)
+
+    if (Number.isFinite(value)) {
+      bpmEl.innerText = value.toFixed(2)
+    }
+  })
+
+  window.api.onLinkPeers((peers) => {
+    const peersEl = document.getElementById('link-peers')
+
+    if (!peersEl) return
+
+    peersEl.innerText = String(peers)
+  })
+
   window.api.onNowPlaying((data) => {
     const deck = Number(data.deck)
 
